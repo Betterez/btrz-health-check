@@ -1,17 +1,19 @@
 {
   "name": "btrz-health-check",
   "version": "1.0.0",
-  "description": "A series of classes that will ping different service types to verify accesibility.",
+  "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "NODE_ENV=test multi='xunit=test-results/xunit.xml spec=-' node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- --ui bdd -R mocha-multi -t 5000",
+    "test-w": "NODE_ENV=test node_modules/mocha/bin/mocha -w",
+    "publish": "publish"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Betterez/btrz-health-check.git"
+    "url": "https://github.com/Betterez/btrz-health-check.git"
   },
   "keywords": [
     "Microservices",
@@ -22,10 +24,21 @@
     "mongo",
     "http"
   ],
-  "author": "Betterez",
+  "author": {
+    "name": "hgarcia",
+    "email": "hernan@dynamicprogrammer.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Betterez/btrz-health-check/issues"
   },
-  "homepage": "https://github.com/Betterez/btrz-health-check#readme"
+  "homepage": "https://github.com/Betterez/btrz-health-check#readme",
+  "devDependencies": {
+    "chai": "latest",
+    "istanbul": "^0.4.1",
+    "mocha": "latest",
+    "mocha-multi": "latest",
+    "publish": "^0.5.0",
+    "xunit-file": "latest"
+  }
 }
