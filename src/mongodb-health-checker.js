@@ -1,12 +1,17 @@
 "use strict";
 
-function serviceStatus(status) {
-  return {name: "MongoDb", status: status};
+function serviceStatus(serviceName, status) {
+  return {name: serviceName, status: status};
 }
 
 class MongoDbHealthChecker {
-  constructor(db) {
+  constructor(db, options) {
+    if (!db || !db.collectionNames) {
+      throw new Error("Instanciate with a valid mongoDbDriver instance");
+    }
     this.db = db;
+    this.serviceName = options && options.serviceName ? options.serviceName : "MongoDb";
+    this.logger = options && options.logger ? options.logger : {error: function () {}};
   }
 
   checkStatus() {
@@ -14,9 +19,10 @@ class MongoDbHealthChecker {
     function resolver(resolve, reject) {
       self.db.collectionNames(function (err) {
         if (err) {
-          reject(serviceStatus(500));
+          self.logger.error(self.serviceName, err);
+          reject(serviceStatus(self.serviceName, 500));
         } else {
-          resolve(serviceStatus(200));
+          resolve(serviceStatus(self.serviceName, 200));
         }
       });
     }
