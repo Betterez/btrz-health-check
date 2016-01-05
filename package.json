@@ -1,0 +1,31 @@
+{
+  "name": "btrz-health-check",
+  "version": "1.0.0",
+  "description": "A series of classes that will ping different service types to verify accesibility.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Betterez/btrz-health-check.git"
+  },
+  "keywords": [
+    "Microservices",
+    "checks",
+    "ping",
+    "accesibility",
+    "sqs",
+    "mongo",
+    "http"
+  ],
+  "author": "Betterez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Betterez/btrz-health-check/issues"
+  },
+  "homepage": "https://github.com/Betterez/btrz-health-check#readme"
+}
