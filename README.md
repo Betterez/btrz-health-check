@@ -81,3 +81,27 @@ Will check connectivity to MongoDb doing a call to collectionNames in the MongoD
 
 The only mandatory parameter is an instance of a properly configured mongoDriver.
 Internally we will call the `collectionNames()` function, so it should at least implement that function.
+
+
+### Socket
+
+Will check connectivity to a socket server using the `net` module
+
+    {name: "Socket", status: 200} //if promise resolves
+    {name: "Socket", status: 200} //if promise rejects
+
+#### Usage
+
+    let SocketHealthChecker =  require("btrz-health-checker").SocketHealthChecker;
+
+    let socketChecker = new SocketHealthChecker(mongoDriver);
+    socketChecker.checkStatus()
+      .then(function (result) {
+        //If's working fine
+      })
+      .catch(function (result) {
+        //Something is not wright.
+      });
+
+The only mandatory parameter is a config literal with a host and port to connect to.
+The config can also contains a `timeout` property and it will be use to fail in case the timeout is reached, the default value is 5000.
