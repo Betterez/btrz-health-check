@@ -1,17 +1,13 @@
 "use strict";
-
-function serviceStatus(serviceName, status) {
-  return {name: serviceName, status: status};
-}
+let ServiceStatus = require("./service-status").ServiceStatus;
 
 class MongoDbHealthChecker {
   constructor(db, options) {
     if (!db || !db.collectionNames) {
-      throw new Error("Instanciate with a valid mongoDbDriver instance");
+      throw new Error("Requires a valid mongoDbDriver instance that implements 'collectionNames'");
     }
     this.db = db;
-    this.serviceName = options && options.serviceName ? options.serviceName : "MongoDb";
-    this.logger = options && options.logger ? options.logger : {error: function () {}};
+    this.serviceStatus = new ServiceStatus("MongoDb", options);
   }
 
   checkStatus() {
@@ -19,10 +15,9 @@ class MongoDbHealthChecker {
     function resolver(resolve, reject) {
       self.db.collectionNames(function (err) {
         if (err) {
-          self.logger.error(self.serviceName, err);
-          reject(serviceStatus(self.serviceName, 500));
+          reject(self.serviceStatus.fails(err));
         } else {
-          resolve(serviceStatus(self.serviceName, 200));
+          resolve(self.serviceStatus.success());
         }
       });
     }

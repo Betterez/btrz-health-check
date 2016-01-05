@@ -18,13 +18,50 @@ You can also create your own checkers easily.
 
 ## Custom checkers
 
+All custom providers will return a promise that resolves or fails with the service name and status.
+
+    {name: "ServiceName", status: 200} //if promise resolves
+    {name: "ServiceName", status: 200} //if promise rejects
+
+All custom providers also take an optional `options` parameter that allow to override the service name and to provide a logger object.
+
+Override the service name is useful when you need to validate the connection to multiple services of the same type.
+
+    let mongoChecker = new MongoDbHealthChecker(mongoDriver, {name: "MyCustomServiceName"});
+
+You can also provide a logger to log the error on failure. The object should have an `.error` function. It will be called with the name of the service and the error.
+
+    let mongoChecker = new MongoDbHealthChecker(mongoDriver, {logger: myLogger});
 
 ## Build in checkers
+
+### SQS
+
+Will check connectivity to Amazon SQS. It will read a list of queues available for the logged in user.
+
+    {name: "SQS", status: 200} //if promise resolves
+    {name: "SQS", status: 200} //if promise rejects
+
+    #### Usage
+
+        let SQSHealthChecker =  require("btrz-health-checker").SQSHealthChecker;
+
+        let sqsChecker = new SQSHealthChecker(awsSqsDriver);
+        sqsChecker.checkStatus()
+          .then(function (result) {
+            //If's working fine
+          })
+          .catch(function (result) {
+            //Something is not wright.
+          });
+
+The only mandatory parameter is an instance of a properly configured AWS SQS driver.
+Internally we will call the `listQueues()` function, so it should at least implement that function.
+
 
 ### MongoDb
 
 Will check connectivity to MongoDb doing a call to collectionNames in the MongoDb driver.
-It will return a promise that resolves or fails with the service name and status.
 
     {name: "MongoDb", status: 200} //if promise resolves
     {name: "MongoDb", status: 200} //if promise rejects
@@ -42,14 +79,5 @@ It will return a promise that resolves or fails with the service name and status
         //Something is not wright.
       });
 
-The only mandatory parameter is an instance of a properly configured mongoDriver. Internally we will call the `collectionNames()` function, so it should at least implement that function.
-
-A second options parameter allow to override the service name and to provide a logger object.
-
-You can override the service name (by default is "MongoDb"), this is useful when you need to validate the connection to multiple servers or db's.
-
-    let mongoChecker = new MongoDbHealthChecker(mongoDriver, {serviceName: "MyCustomServiceName"});
-
-You can also provide a logger to the constructor to log the error on failure. The object should have an `.error` function. It will be called with the serviceName and the error.
-
-    let mongoChecker = new MongoDbHealthChecker(mongoDriver, {logger: myLogger});
+The only mandatory parameter is an instance of a properly configured mongoDriver.
+Internally we will call the `collectionNames()` function, so it should at least implement that function.

@@ -1,12 +1,14 @@
 "use strict";
 
-function serviceStatus(status) {
-  return {name: "SQS", status: status};
-}
+let ServiceStatus = require("./service-status").ServiceStatus;
 
 class SQSHealthChecker {
-  constructor(queue) {
+  constructor(queue, options) {
+    if (!queue || !queue.listQueues) {
+      throw new Error("Requires a valid awsSqsDriver instance that implements 'listQueues'");
+    }
     this.queue = queue;
+    this.serviceStatus = new ServiceStatus("SQS", options);
   }
 
   checkStatus() {
@@ -14,10 +16,10 @@ class SQSHealthChecker {
     function resolver(resolve, reject) {
       self.queue.listQueues(function (err, result) {
         if (err) {
-          reject(serviceStatus(500));
+          reject(self.serviceStatus.fails(err));
         }
         if (result) {
-          resolve(serviceStatus(200));
+          resolve(self.serviceStatus.success());
         }
       });
     }

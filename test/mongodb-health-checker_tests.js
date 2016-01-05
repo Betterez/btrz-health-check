@@ -29,7 +29,7 @@ describe("MongoDbHealthChecker", function () {
   });
 
   it("should allow for a custom service name", function (done) {
-    let checker = new MongoDbHealthChecker(db, {serviceName: "MyService"});
+    let checker = new MongoDbHealthChecker(db, {name: "MyService"});
     checker.checkStatus().then(function (result) {
       expect(result.name).to.be.eql("MyService");
       expect(result.status).to.be.eql(200);
@@ -76,7 +76,7 @@ describe("MongoDbHealthChecker", function () {
           cb(new Error());
         }
     };
-    let checker = new MongoDbHealthChecker(db, {serviceName: "MyService"});
+    let checker = new MongoDbHealthChecker(db, {name: "MyService"});
     checker.checkStatus().catch(function (result) {
       expect(result.name).to.be.eql("MyService");
       expect(result.status).to.be.eql(500);
