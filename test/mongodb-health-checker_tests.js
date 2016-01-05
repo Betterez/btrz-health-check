@@ -1,14 +1,12 @@
 "use strict";
 
 describe("MongoDbHealthChecker", function () {
-  let MongoDbHealthChecker =  require("../resources/health-checkers/mongodb-health-checker").MongoDbHealthChecker,
-    config = require("../config")(process.env),
-    SimpleDao = require("btrz-simple-dao").SimpleDao,
+  let MongoDbHealthChecker =  require("../src/mongodb-health-checker").MongoDbHealthChecker,
     expect = require("chai").expect,
-    simpleDao = new SimpleDao(config);
+    db = {collectionNames: function (cb) { return cb();}};
 
   it("should return 200 if everything is fine", function (done) {
-    let checker = new MongoDbHealthChecker(simpleDao);
+    let checker = new MongoDbHealthChecker(db);
     checker.checkStatus().then(function (result) {
       expect(result.name).to.be.eql("MongoDb");
       expect(result.status).to.be.eql(200);
@@ -17,13 +15,12 @@ describe("MongoDbHealthChecker", function () {
   });
 
   it("should return 500 if can't connect", function (done) {
-    let simpleDao = {db:
-      {collectionNames: function () {
-          return Promise.reject(new Error());
+    let db =
+      {collectionNames: function (cb) {
+          cb(new Error());
         }
-      }
     };
-    let checker = new MongoDbHealthChecker(simpleDao);
+    let checker = new MongoDbHealthChecker(db);
     checker.checkStatus().catch(function (result) {
       expect(result.name).to.be.eql("MongoDb");
       expect(result.status).to.be.eql(500);

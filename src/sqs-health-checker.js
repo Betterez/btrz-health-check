@@ -12,7 +12,7 @@ class SQSHealthChecker {
   checkStatus() {
     let self = this;
     function resolver(resolve, reject) {
-      self.queue.sqs.listQueues(function (err, result) {
+      self.queue.listQueues(function (err, result) {
         if (err) {
           reject(serviceStatus(500));
         }

@@ -5,18 +5,22 @@ function serviceStatus(status) {
 }
 
 class MongoDbHealthChecker {
-  constructor(simpleDao) {
-    this.simpleDao = simpleDao;
+  constructor(db) {
+    this.db = db;
   }
 
   checkStatus() {
-    return this.simpleDao.db.
-      collectionNames().then(function () {
-        return serviceStatus(200);
-      })
-      .catch(function () {
-        return Promise.reject(serviceStatus(500));
+    let self = this;
+    function resolver(resolve, reject) {
+      self.db.collectionNames(function (err) {
+        if (err) {
+          reject(serviceStatus(500));
+        } else {
+          resolve(serviceStatus(200));
+        }
       });
+    }
+    return new Promise(resolver);
   }
 }
 

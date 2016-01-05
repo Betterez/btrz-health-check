@@ -1,7 +1,7 @@
 "use strict";
 
 describe("HealthCheckers", function () {
-  let HealthCheckers = require("../resources/health-checkers").HealthCheckers,
+  let HealthCheckers = require("../src/health-checkers").HealthCheckers,
     expect = require("chai").expect;
 
 
