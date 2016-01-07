@@ -5,14 +5,10 @@ let git = require("git-rev"),
 
 class EnvironmentInfo {
 
-  git() {
-    function resolver(resolve) {
-      git.long(function (str) {
-          resolve(str);
-      });
-    }
-    return new Promise(resolver);
+  buildNumber() {
+    return process.env.BUILD_NUMBER || "0";
   }
+
   ec2instanceId() {
     function resolver(resolve, reject) {
       ec2("instance-id", function (err, instanceId) {
@@ -26,12 +22,23 @@ class EnvironmentInfo {
     return new Promise(resolver);
   }
 
+  git() {
+    function resolver(resolve) {
+      git.long(function (str) {
+          resolve(str);
+      });
+    }
+    return new Promise(resolver);
+  }
+
   values() {
+    let self = this;
     return Promise.all([this.git(), this.ec2instanceId()])
       .then(function (results) {
         return {
           commit: results[0],
-          instanceId: results[1]
+          instanceId: results[1],
+          build: self.buildNumber()
         };
       });
   }

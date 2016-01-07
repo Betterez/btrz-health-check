@@ -9,6 +9,7 @@ describe("HealthCheckers", function () {
     checker.checkStatus([]).then(function (result) {
       expect(result.instanceId).to.not.be.undefined;
       expect(result.commit).to.not.be.undefined;
+      expect(result.build).to.be.eql("123456789");
       done();
     });
   });

@@ -29,6 +29,7 @@ class HealthCheckers {
       .then(function (results) {
         results[0].commit = results[1].commit;
         results[0].instanceId = results[1].instanceId;
+        results[0].build = results[1].build;
         return results[0];
       });
   }

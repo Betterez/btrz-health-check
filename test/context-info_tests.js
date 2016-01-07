@@ -21,10 +21,15 @@ describe("EnvironmentInfo", function () {
       });
   });
 
+  it("should return the BUILD_NUMBER", function () {
+    expect(env.buildNumber()).to.be.eql("123456789");
+  });
+
   it("should return the env variables combined", function (done) {
     env.values().then(function (result) {
       expect(result.commit).not.to.be.null;
       expect(result.instanceId).to.be.eql("localhost");
+      expect(result.build).to.be.eql("123456789");
       done();
     });
   });
