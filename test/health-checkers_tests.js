@@ -4,6 +4,14 @@ describe("HealthCheckers", function () {
   let HealthCheckers = require("../src/health-checkers").HealthCheckers,
     expect = require("chai").expect;
 
+  it("should include the ec2 instance Id and the git revision", function (done) {
+    var checker = new HealthCheckers();
+    checker.checkStatus([]).then(function (result) {
+      expect(result.instanceId).to.not.be.undefined;
+      expect(result.commit).to.not.be.undefined;
+      done();
+    });
+  });
 
   it("should return 200 if all services are ok", function (done) {
     var checker = new HealthCheckers(),

@@ -1,6 +1,6 @@
 {
   "name": "btrz-health-check",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "directories": {
@@ -38,5 +38,9 @@
     "istanbul": "^0.4.1",
     "mocha": "latest",
     "publish": "^0.5.0"
+  },
+  "dependencies": {
+    "ec2-metadata": "^1.0.1",
+    "git-rev": "^0.2.1"
   }
 }
