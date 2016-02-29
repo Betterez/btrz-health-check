@@ -22,9 +22,6 @@ class SocketHealthChecker {
           resolve(self.serviceStatus.success());
         }
       });
-      client.setTimeout(self.timeOut, function () {
-        reject(self.serviceStatus.fails(new Error(`Timeout after: ${self.timeOut}`)));
-      });
       client.on("error", function (err) {
         reject(self.serviceStatus.fails(err));
       });
