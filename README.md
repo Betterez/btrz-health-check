@@ -105,3 +105,27 @@ Will check connectivity to a socket server using the `net` module
 
 The only mandatory parameter is a config literal with a host and port to connect to.
 The config can also contains a `timeout` property and it will be use to fail in case the timeout is reached, the default value is 5000.
+
+### Sequelize
+
+Will check connectivity to the Sequelize DB doing a call to authenticate.
+
+    {name: "Sequelize DB", status: 200} //if promise resolves
+    {name: "Sequelize DB", status: 500} //if promise rejects
+
+#### Usage
+
+    const SequelizeDbHealthChecker =  require("btrz-health-checker").SequelizeDbHealthChecker,
+      sequelizeChecker = new SequelizeDbHealthChecker(sequelize);
+
+    sequelizeChecker.checkStatus()
+      .then((result) => {
+        //working fine
+      })
+      .catch((result) => {
+        //Something is not right.
+      });
+
+The only mandatory parameter is an instance of sequelize.
+Internally we will call the `authenticate()` function along with a valid sequelize config, so it should at least implement that function with a valid DB config.
+

@@ -1,13 +1,13 @@
 {
   "name": "btrz-health-check",
-  "version": "1.6.1",
+  "version": "1.7.1",
   "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- --ui bdd -t 5000",
+    "test": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- --ui bdd -t 5000 --exit",
     "test-w": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/mocha/bin/mocha -w",
     "publish": "publish"
   },
