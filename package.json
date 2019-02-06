@@ -4,7 +4,7 @@
   "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/mocha/bin/mocha --ui bdd -t 5000",
+    "test": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/mocha/bin/mocha --ui bdd -t 5000 --exit",
     "test-w": "NODE_ENV=test BUILD_NUMBER=123456789 node_modules/mocha/bin/mocha -w"
   },
   "repository": {
