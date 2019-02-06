@@ -1,4 +1,4 @@
-# btrz-health-check [![Circle CI](https://circleci.com/gh/Betterez/btrz-health-check.svg?style=svg)](https://circleci.com/gh/Betterez/btrz-health-check) [![NPM version](https://badge-me.herokuapp.com/api/npm/btrz-health-check.png)](http://badges.enytc.com/for/npm/btrz-health-check)
+# btrz-health-check
 
 A series of classes that will ping different service types to verify accessibility. Used in Betterez microservices to check status of dependent services.
 
