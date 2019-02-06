@@ -44,7 +44,7 @@ describe("SocketHealthChecker", function () {
   it("should return 500 if connection is refused", function (done) {
     let config = {
       host: "127.0.0.1",
-      port: "80"
+      port: "81"
     },
     checker = new SocketHealthChecker(config);
     checker.checkStatus().catch(function (result) {
@@ -57,7 +57,7 @@ describe("SocketHealthChecker", function () {
   it("should return 500 and a custom name", function (done) {
     let config = {
       host: "127.0.0.1",
-      port: "80"
+      port: "81"
     },
     checker = new SocketHealthChecker(config, {name: "UDP"});
     checker.checkStatus().catch(function (result) {
@@ -70,7 +70,7 @@ describe("SocketHealthChecker", function () {
   it("should call the logger if given", function (done) {
     let config = {
       host: "127.0.0.1",
-      port: "80"
+      port: "81"
     },
     options = {
       logger: {
