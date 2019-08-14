@@ -10,18 +10,13 @@ class MongoDbHealthChecker {
     this.serviceStatus = new ServiceStatus("MongoDb", options);
   }
 
-  checkStatus() {
-    let self = this;
-    function resolver(resolve, reject) {
-      self.db.collectionNames(function (err) {
-        if (err) {
-          reject(self.serviceStatus.fails(err));
-        } else {
-          resolve(self.serviceStatus.success());
-        }
-      });
+  async checkStatus() {
+    try {
+      await this.db.collectionNames();
+      return this.serviceStatus.success();
+    } catch (err) {
+      throw this.serviceStatus.fails(err);
     }
-    return new Promise(resolver);
   }
 }
 
