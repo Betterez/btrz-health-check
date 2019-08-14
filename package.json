@@ -30,8 +30,9 @@
   },
   "homepage": "https://github.com/Betterez/btrz-health-check#readme",
   "devDependencies": {
-    "chai": "latest",
-    "mocha": "latest"
+    "chai": "4.2.0",
+    "mocha": "6.2.0",
+    "sinon": "7.4.1"
   },
   "dependencies": {
     "ec2-metadata": "^1.0.1",
