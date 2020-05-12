@@ -1,7 +1,7 @@
 "use strict";
 
-let git = require("git-rev"),
- ec2 = require("ec2-metadata");
+const git = require("git-rev");
+const ec2 = require("./ec2-metadata");
 
 class EnvironmentInfo {
 
@@ -10,7 +10,7 @@ class EnvironmentInfo {
   }
 
   ec2instanceId() {
-    function resolver(resolve, reject) {
+    function resolver(resolve) {
       ec2("instance-id", function (err, instanceId) {
         if (err) {
           resolve("localhost");
