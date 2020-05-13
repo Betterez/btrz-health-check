@@ -5,3 +5,4 @@ exports.MongoDbHealthChecker = require("./src/mongodb-health-checker").MongoDbHe
 exports.SocketHealthChecker = require("./src/socket-health-checker").SocketHealthChecker;
 exports.SQSHealthChecker = require("./src/sqs-health-checker").SQSHealthChecker;
 exports.SequelizeDbHealthChecker = require("./src/sequelize-health-checker").SequelizeDbHealthChecker;
+exports.EnvironmentInfo = require("./src/environment-info").EnvironmentInfo;
