@@ -59,15 +59,16 @@ describe("SQSHealthChecker", function () {
     },
     options = {
       logger: {
-        error: function (name, err) {
-          expect(name).to.eql("SQS");
-          expect(err).not.to.be.null;
-          done();
+        error: function () {
         }
       }
     };
     let checker = new SQSHealthChecker(sqs, options);
-    checker.checkStatus();
+    checker.checkStatus().catch((result) => {
+      expect(result.name).to.be.eql("SQS");
+      expect(result.status).to.be.eql(500);
+      done();
+    });
   });
 
   it("should allow for a custom service name on failures as well", function (done) {

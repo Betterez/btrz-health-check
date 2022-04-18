@@ -74,14 +74,15 @@ describe("SocketHealthChecker", function () {
     },
     options = {
       logger: {
-        error: function (name, err) {
-          expect(name).to.be.eql("Socket");
-          expect(err).not.to.be.null;
-          done();
+        error: function () {
         }
       }
     },
     checker = new SocketHealthChecker(config, options);
-    checker.checkStatus();
+    checker.checkStatus().catch(function (err) {
+      expect(err.name).to.be.eql("Socket");
+      expect(err.status).to.be.eql(500);
+      done();
+    });
   });
 });
