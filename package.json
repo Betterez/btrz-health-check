@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test BUILD_NUMBER=123456789 mocha --ui bdd -t 5000 --exit",
-    "tdd": "NODE_ENV=test BUILD_NUMBER=123456789 mocha -w"
+    "tdd": "NODE_ENV=test BUILD_NUMBER=123456789 mocha -w",
+    "preversion": "npm test",
+    "postversion": "git push origin master && git push --tags"
   },
   "repository": {
     "type": "git",
