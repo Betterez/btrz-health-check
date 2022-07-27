@@ -1,6 +1,6 @@
 {
   "name": "btrz-health-check",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "scripts": {
