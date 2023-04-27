@@ -2,7 +2,7 @@
 
 describe("SQSHealthChecker", function () {
   let SQSHealthChecker =  require("../src/sqs-health-checker").SQSHealthChecker,
-    sqs = {listQueues: function (cb) {cb(null, []); }},
+    sqs = {listQueues: function () { return Promise.resolve();}},
     expect = require("chai").expect;
 
   it("shouldn throw if not a proper awsSqs is given", function () {
@@ -39,8 +39,8 @@ describe("SQSHealthChecker", function () {
 
   it("should return 500 if can't connect", function (done) {
     let sqs =
-      {listQueues: function (cb) {
-          cb(new Error());
+      {listQueues: function () {
+          return Promise.reject();
         }
       };
     let checker = new SQSHealthChecker(sqs);
@@ -53,8 +53,8 @@ describe("SQSHealthChecker", function () {
 
   it("should call the logger with the error if provide it", function (done) {
     let sqs =
-      {listQueues: function (cb) {
-          cb(new Error());
+      {listQueues: function () {
+          return Promise.reject();
         }
     },
     options = {
@@ -73,8 +73,8 @@ describe("SQSHealthChecker", function () {
 
   it("should allow for a custom service name on failures as well", function (done) {
     let sqs =
-      {listQueues: function (cb) {
-          cb(new Error());
+      {listQueues: function () {
+          return Promise.reject();
         }
       };
     let checker = new SQSHealthChecker(sqs, {name: "MyService"});

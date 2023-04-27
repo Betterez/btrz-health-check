@@ -1,7 +1,4 @@
-"use strict";
-
 let ServiceStatus = require("./service-status").ServiceStatus;
-
 class SQSHealthChecker {
   constructor(queue, options) {
     if (!queue || !queue.listQueues) {
@@ -13,17 +10,13 @@ class SQSHealthChecker {
 
   checkStatus() {
     let self = this;
-    function resolver(resolve, reject) {
-      self.queue.listQueues(function (err, result) {
-        if (err) {
-          reject(self.serviceStatus.fails(err));
-        }
-        if (result) {
-          resolve(self.serviceStatus.success());
-        }
+    return self.queue.listQueues({})
+      .then(() => {
+        return self.serviceStatus.success();
+      })
+      .catch((err) => {
+        return Promise.reject(self.serviceStatus.fails(err));
       });
-    }
-    return new Promise(resolver);
   }
 }
 
