@@ -1,42 +1,31 @@
-"use strict";
+const assert = require("node:assert/strict");
+const { describe, it } = require("node:test");
 
 describe("EnvironmentInfo", function () {
-  let EnvironmentInfo = require("../src/environment-info").EnvironmentInfo,
-    expect = require("chai").expect,
-    env = new EnvironmentInfo();
+  const EnvironmentInfo = require("../src/environment-info").EnvironmentInfo;
+  const env = new EnvironmentInfo();
 
-  it("should include the git commit hash if is a git repo", function (done) {
-    env.git()
-      .then(function (result) {
-        expect(result).not.to.be.null;
-        done();
-      });
+  it("should include the git commit hash if is a git repo", async function () {
+    const result = await env.git();
+    assert.notEqual(result, null);
   });
 
-  it("should return localhost if can't find the ec2 instance Id", function (done) {
-    env.ec2instanceId()
-      .then(function (result) {
-        expect(result).not.to.be.eql(undefined);
-        if (result === "localhost") {
-          expect(result).to.be.eql("localhost");
-        }
-        done();
-      })
-      .catch((err) => {
-        done(err);
-      });
+  it("should return localhost if can't find the ec2 instance Id", async function () {
+    const result = await env.ec2instanceId();
+    assert.notEqual(result, undefined);
+    if (result === "localhost") {
+      assert.equal(result, "localhost");
+    }
   });
 
   it("should return the BUILD_NUMBER", function () {
-    expect(env.buildNumber()).to.be.eql("123456789");
+    assert.equal(env.buildNumber(), "123456789");
   });
 
-  it("should return the env variables combined", function (done) {
-    env.values().then(function (result) {
-      expect(result.commit).not.to.be.null;
-      expect(result.instanceId).to.not.be.eql(undefined);
-      expect(result.build).to.be.eql("123456789");
-      done();
-    });
+  it("should return the env variables combined", async function () {
+    const result = await env.values();
+    assert.notEqual(result.commit, null);
+    assert.notEqual(result.instanceId, undefined);
+    assert.equal(result.build, "123456789");
   });
 });

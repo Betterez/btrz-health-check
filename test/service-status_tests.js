@@ -1,58 +1,56 @@
-"use strict";
+const assert = require("node:assert/strict");
+const { describe, it } = require("node:test");
 
 describe("ServiceStatus", function () {
-  let ServiceStatus = require("../src/service-status").ServiceStatus,
-    expect = require("chai").expect,
-    defaultName = "Default";
+  const ServiceStatus = require("../src/service-status").ServiceStatus;
+  const defaultName = "Default";
 
   it("should take the defaultName if not options", function () {
-
-    let service = new ServiceStatus(defaultName);
-    expect(service.name).to.eql(defaultName);
+    const service = new ServiceStatus(defaultName);
+    assert.equal(service.name, defaultName);
   });
 
   it("should have a default logger", function () {
-    let service = new ServiceStatus(defaultName);
-    expect(service.logger.error).to.not.be.undefined;
+    const service = new ServiceStatus(defaultName);
+    assert.notEqual(service.logger.error, undefined);
   });
 
   it("should override the name from the options", function () {
-    let options = {name: "MyService"},
-    service = new ServiceStatus(defaultName, options);
-    expect(service.name).to.be.eql(options.name);
+    const options = { name: "MyService" };
+    const service = new ServiceStatus(defaultName, options);
+    assert.equal(service.name, options.name);
   });
 
   it("should override the logger from the options", function () {
-    let options = {logger: function () { return "hello"; }},
-    service = new ServiceStatus(defaultName, options);
-    expect(service.logger).to.be.eql(options.logger);
+    const options = { logger: function () { return "hello"; } };
+    const service = new ServiceStatus(defaultName, options);
+    assert.equal(service.logger, options.logger);
   });
 
   it("should return the status when it works", function () {
-    let service = new ServiceStatus(defaultName),
-      status = service.success();
-    expect(status.name).to.be.eql(defaultName);
-    expect(status.status).to.be.eql(200);
+    const service = new ServiceStatus(defaultName);
+    const status = service.success();
+    assert.equal(status.name, defaultName);
+    assert.equal(status.status, 200);
   });
 
   it("should return the status when it fails", function () {
-    let service = new ServiceStatus(defaultName),
-      status = service.fails();
-    expect(status.name).to.be.eql(defaultName);
-    expect(status.status).to.be.eql(500);
+    const service = new ServiceStatus(defaultName);
+    const status = service.fails();
+    assert.equal(status.name, defaultName);
+    assert.equal(status.status, 500);
   });
 
-  it("should call the logger with the error", function (done) {
-    let options = {
+  it("should call the logger with the error", function () {
+    const options = {
       logger: {
         error: function (name, error) {
-          expect(name).to.be.eql(defaultName);
-          expect(error).not.to.be.null;
-          done();
+          assert.equal(name, defaultName);
+          assert.notEqual(error, null);
         }
       }
     };
-    let service = new ServiceStatus(defaultName, options),
-      status = service.fails(new Error());
+    const service = new ServiceStatus(defaultName, options);
+    service.fails(new Error("failure"));
   });
 });

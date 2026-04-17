@@ -4,8 +4,8 @@
   "description": "A series of classes that will ping different service types to verify accessibility.",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test BUILD_NUMBER=123456789 mocha --ui bdd -t 5000 --exit",
-    "tdd": "NODE_ENV=test BUILD_NUMBER=123456789 mocha -w",
+    "test": "NODE_ENV=test BUILD_NUMBER=123456789 node --test --test-timeout=5000 \"test/*_tests.js\"",
+    "tdd": "NODE_ENV=test BUILD_NUMBER=123456789 node --test --watch --test-timeout=5000 \"test/*_tests.js\"",
     "preversion": "npm test",
     "postversion": "git push origin master && git push --tags"
   },
@@ -32,12 +32,10 @@
   },
   "homepage": "https://github.com/Betterez/btrz-health-check#readme",
   "devDependencies": {
-    "chai": "4.3.7",
-    "mocha": "10.2.0",
-    "sinon": "15.0.4"
+    "sinon": "21.1.2"
   },
   "dependencies": {
-    "superagent": "8.0.9",
-    "git-rev": "^0.2.1"
+    "git-rev": "0.2.1",
+    "superagent": "10.3.0"
   }
 }

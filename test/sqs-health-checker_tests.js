@@ -1,87 +1,83 @@
-"use strict";
+const assert = require("node:assert/strict");
+const { describe, it } = require("node:test");
 
 describe("SQSHealthChecker", function () {
-  let SQSHealthChecker =  require("../src/sqs-health-checker").SQSHealthChecker,
-    sqs = {listQueues: function () { return Promise.resolve();}},
-    expect = require("chai").expect;
+  const SQSHealthChecker =  require("../src/sqs-health-checker").SQSHealthChecker;
+  const sqs = {listQueues: function () { return Promise.resolve();}};
 
   it("shouldn throw if not a proper awsSqs is given", function () {
     function sut() {
       new SQSHealthChecker();
     }
-    expect(sut).to.throw();
+    assert.throws(sut);
   });
 
   it("shouldn throw if awsSqs doesn't implement listQueues", function () {
     function sut() {
       new SQSHealthChecker({});
     }
-    expect(sut).to.throw();
+    assert.throws(sut);
   });
 
-  it("should return 200 if everything is fine", function (done) {
-    let checker = new SQSHealthChecker(sqs);
-    checker.checkStatus().then(function (result) {
-      expect(result.name).to.be.eql("SQS");
-      expect(result.status).to.be.eql(200);
-      done();
-    });
+  it("should return 200 if everything is fine", async function () {
+    const checker = new SQSHealthChecker(sqs);
+    const result = await checker.checkStatus();
+    assert.equal(result.name, "SQS");
+    assert.equal(result.status, 200);
   });
 
-  it("should allow for a custom service name", function (done) {
-    let checker = new SQSHealthChecker(sqs, {name: "MyService"});
-    checker.checkStatus().then(function (result) {
-      expect(result.name).to.be.eql("MyService");
-      expect(result.status).to.be.eql(200);
-      done();
-    });
+  it("should allow for a custom service name", async function () {
+    const checker = new SQSHealthChecker(sqs, {name: "MyService"});
+    const result = await checker.checkStatus();
+    assert.equal(result.name, "MyService");
+    assert.equal(result.status, 200);
   });
 
-  it("should return 500 if can't connect", function (done) {
-    let sqs =
+  it("should return 500 if can't connect", async function () {
+    const failingSqs =
       {listQueues: function () {
           return Promise.reject();
         }
       };
-    let checker = new SQSHealthChecker(sqs);
-    checker.checkStatus().catch(function (result) {
-      expect(result.name).to.be.eql("SQS");
-      expect(result.status).to.be.eql(500);
-      done();
+    const checker = new SQSHealthChecker(failingSqs);
+    await assert.rejects(checker.checkStatus(), (result) => {
+      assert.equal(result.name, "SQS");
+      assert.equal(result.status, 500);
+      return true;
     });
   });
 
-  it("should call the logger with the error if provide it", function (done) {
-    let sqs =
+  it("should call the logger with the error if provide it", async function () {
+    const failingSqs =
       {listQueues: function () {
           return Promise.reject();
         }
     },
-    options = {
+      options = {
       logger: {
         error: function () {
         }
       }
     };
-    let checker = new SQSHealthChecker(sqs, options);
-    checker.checkStatus().catch((result) => {
-      expect(result.name).to.be.eql("SQS");
-      expect(result.status).to.be.eql(500);
-      done();
+    const checker = new SQSHealthChecker(failingSqs, options);
+    await assert.rejects(checker.checkStatus(), (result) => {
+      assert.equal(result.name, "SQS");
+      assert.equal(result.status, 500);
+      return true;
     });
   });
 
-  it("should allow for a custom service name on failures as well", function (done) {
-    let sqs =
+  it("should allow for a custom service name on failures as well", async function () {
+    const failingSqs =
       {listQueues: function () {
           return Promise.reject();
         }
       };
-    let checker = new SQSHealthChecker(sqs, {name: "MyService"});
-    checker.checkStatus().catch(function (result) {
-      expect(result.name).to.be.eql("MyService");
-      expect(result.status).to.be.eql(500);
-      done();
+    const checker = new SQSHealthChecker(failingSqs, {name: "MyService"});
+    await assert.rejects(checker.checkStatus(), (result) => {
+      assert.equal(result.name, "MyService");
+      assert.equal(result.status, 500);
+      return true;
     });
   });
 });

@@ -1,88 +1,131 @@
-"use strict";
+const assert = require("node:assert/strict");
+const { describe, it } = require("node:test");
+const net = require("node:net");
 
 describe("SocketHealthChecker", function () {
+  const SocketHealthChecker = require("../src/socket-health-checker").SocketHealthChecker;
+  async function createListeningServer() {
+    const server = net.createServer((socket) => {
+      socket.destroy();
+    });
+    await new Promise((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", resolve);
+    });
+    return server;
+  }
 
-  let SocketHealthChecker = require("../src/socket-health-checker").SocketHealthChecker,
-    SocketServer = require("./helpers/socket-server").SocketServer,
-    expect = require("chai").expect;
+  async function closeServer(server) {
+    await new Promise((resolve, reject) => {
+      server.close((err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve();
+      });
+    });
+  }
+
+
+  async function getUnusedPort() {
+    return new Promise((resolve, reject) => {
+      const server = net.createServer();
+      server.once("error", reject);
+      server.listen(0, "127.0.0.1", () => {
+        const { port } = server.address();
+        server.close((err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(port);
+        });
+      });
+    });
+  }
 
   it("should throw if not config is given", function () {
     function sut() {
       new SocketHealthChecker();
     }
-    expect(sut).to.throw();
+    assert.throws(sut);
   });
 
   it("should throw if not host in config", function () {
     function sut() {
       new SocketHealthChecker({port: 1010});
     }
-    expect(sut).to.throw();
+    assert.throws(sut);
   });
 
   it("should throw if not port in config", function () {
     function sut() {
       new SocketHealthChecker({host: "1.1.1.1"});
     }
-    expect(sut).to.throw();
+    assert.throws(sut);
   });
 
 
-  it("should connecto to a listening server", function (done) {
-    let config = {port: 8765, host: "localhost"},
-    checker = new SocketHealthChecker(config),
-    server = new SocketServer(config.port);
-    checker.checkStatus().then(function (result) {
-      server.close();
-      expect(result.name).to.be.eql("Socket");
-      expect(result.status).to.be.eql(200);
-      done();
-    });
-
+  it("should connecto to a listening server", async function () {
+    const server = await createListeningServer();
+    const { port } = server.address();
+    const config = {port, host: "127.0.0.1"};
+    const checker = new SocketHealthChecker(config);
+    try {
+      const result = await checker.checkStatus();
+      assert.equal(result.name, "Socket");
+      assert.equal(result.status, 200);
+    } finally {
+      await closeServer(server);
+    }
   });
 
-  it("should return 500 if connection is refused", function (done) {
-    let config = {
+  it("should return 500 if connection is refused", async function () {
+    const unusedPort = await getUnusedPort();
+    const config = {
       host: "127.0.0.1",
-      port: "81"
-    },
-    checker = new SocketHealthChecker(config);
-    checker.checkStatus().catch(function (result) {
-      expect(result.name).to.be.eql("Socket");
-      expect(result.status).to.be.eql(500);
-      done();
-    });
-  });
-
-  it("should return 500 and a custom name", function (done) {
-    let config = {
-      host: "127.0.0.1",
-      port: "81"
-    },
-    checker = new SocketHealthChecker(config, {name: "UDP"});
-    checker.checkStatus().catch(function (result) {
-      expect(result.name).to.be.eql("UDP");
-      expect(result.status).to.be.eql(500);
-      done();
+      port: unusedPort
+    };
+    const checker = new SocketHealthChecker(config);
+    await assert.rejects(checker.checkStatus(), (result) => {
+      assert.equal(result.name, "Socket");
+      assert.equal(result.status, 500);
+      return true;
     });
   });
 
-  it("should call the logger if given", function (done) {
-    let config = {
+  it("should return 500 and a custom name", async function () {
+    const unusedPort = await getUnusedPort();
+    const config = {
       host: "127.0.0.1",
-      port: "81"
-    },
-    options = {
+      port: unusedPort
+    };
+    const checker = new SocketHealthChecker(config, {name: "UDP"});
+    await assert.rejects(checker.checkStatus(), (result) => {
+      assert.equal(result.name, "UDP");
+      assert.equal(result.status, 500);
+      return true;
+    });
+  });
+
+  it("should call the logger if given", async function () {
+    const unusedPort = await getUnusedPort();
+    const config = {
+      host: "127.0.0.1",
+      port: unusedPort
+    };
+    const options = {
       logger: {
         error: function () {
         }
       }
-    },
-    checker = new SocketHealthChecker(config, options);
-    checker.checkStatus().catch(function (err) {
-      expect(err.name).to.be.eql("Socket");
-      expect(err.status).to.be.eql(500);
-      done();
+    };
+    const checker = new SocketHealthChecker(config, options);
+    await assert.rejects(checker.checkStatus(), (err) => {
+      assert.equal(err.name, "Socket");
+      assert.equal(err.status, 500);
+      return true;
     });
   });
 });
