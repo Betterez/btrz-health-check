@@ -1,6 +1,6 @@
 "use strict";
 
-const git = require("git-rev");
+const childProcess = require("node:child_process");
 const ec2 = require("./ec2-metadata");
 
 class EnvironmentInfo {
@@ -24,8 +24,13 @@ class EnvironmentInfo {
 
   git() {
     function resolver(resolve) {
-      git.long(function (str) {
-          resolve(str);
+      childProcess.execFile("git", ["rev-parse", "HEAD"], function (err, stdout) {
+        if (err) {
+          resolve(null);
+          return;
+        }
+
+        resolve(stdout ? stdout.trim() : null);
       });
     }
     return new Promise(resolver);

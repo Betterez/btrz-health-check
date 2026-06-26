@@ -1,5 +1,6 @@
 const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
+const childProcess = require("node:child_process");
 
 describe("EnvironmentInfo", function () {
   const EnvironmentInfo = require("../src/environment-info").EnvironmentInfo;
@@ -27,5 +28,19 @@ describe("EnvironmentInfo", function () {
     assert.notEqual(result.commit, null);
     assert.notEqual(result.instanceId, undefined);
     assert.equal(result.build, "123456789");
+  });
+
+  it("should resolve null if the git command fails", async function () {
+    const originalExecFile = childProcess.execFile;
+    childProcess.execFile = function (_command, _args, callback) {
+      callback(new Error("git failed"));
+    };
+
+    try {
+      const result = await env.git();
+      assert.equal(result, null);
+    } finally {
+      childProcess.execFile = originalExecFile;
+    }
   });
 });
