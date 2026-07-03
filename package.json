@@ -7,7 +7,8 @@
     "test": "NODE_ENV=test BUILD_NUMBER=123456789 node --test --test-timeout=15000 \"test/*_tests.js\"",
     "tdd": "NODE_ENV=test BUILD_NUMBER=123456789 node --test --watch --test-timeout=15000 \"test/*_tests.js\"",
     "preversion": "npm test",
-    "postversion": "git push origin master && git push --tags"
+    "postversion": "git push origin master && git push --tags",
+    "prepare": "git config core.hooksPath .githooks"
   },
   "repository": {
     "type": "git",
