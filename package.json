@@ -32,7 +32,5 @@
     "url": "https://github.com/Betterez/btrz-health-check/issues"
   },
   "homepage": "https://github.com/Betterez/btrz-health-check#readme",
-  "devDependencies": {
-    "sinon": "22.0.0"
-  }
+  "devDependencies": {}
 }

@@ -1,16 +1,10 @@
 const assert = require("node:assert/strict");
-const { afterEach, describe, it } = require("node:test");
+const { describe, it, mock } = require("node:test");
 const MongoDbHealthChecker =  require("../src/mongodb-health-checker").MongoDbHealthChecker;
 const db = {async collectionNames() { return ["some_collection"];}};
-const sinon = require("sinon");
-const sandbox = sinon.createSandbox();
 
 
 describe("MongoDbHealthChecker", function () {
-
-  afterEach(() => {
-    sandbox.restore();
-  });
 
   it("should fail if not a proper mongoDriver instance", function () {
     function sut() {
@@ -64,14 +58,14 @@ describe("MongoDbHealthChecker", function () {
     };
     const options = {
       logger: {
-        error: sandbox.stub()
+        error: mock.fn()
       }
     };
     let checker = new MongoDbHealthChecker(db, options);
 
     await assert.rejects(checker.checkStatus());
-    assert.equal(options.logger.error.calledOnce, true);
-    const [name, err] = options.logger.error.getCall(0).args;
+    assert.equal(options.logger.error.mock.callCount(), 1);
+    const [name, err] = options.logger.error.mock.calls[0].arguments;
     assert.equal(name, "MongoDb");
     assert.notEqual(err, null);
   });
